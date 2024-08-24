@@ -1,0 +1,11 @@
+name: comp_phys
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - numpy
+  - matplotlib
+  - scipy
+  - jupyterlab
+  - librosa
+  - vpython
