@@ -1,0 +1,5 @@
+The script output potential per atom using Stillinger-Weber potential are 4.3366 ev, while that of Tersoff potential is 4.629595.
+
+Consequently the total potential of Tersoff also higer than that of Stillinger-Weber, 7999.9401 comparing to 7493.6448.
+
+The lattice parameter used in two input script are the same (as it should because we want to compare two potential ,otherwise we are comparing apple with orange)

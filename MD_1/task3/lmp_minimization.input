@@ -1,0 +1,42 @@
+# Si with Stillinger-Weber potential
+#This line set the style of unit for the simulation. This style will determine which units used in the data type. For example mass = gram/mole;energy= ev
+units metal
+
+# Define the atomic style out of a set of style supported by lammps. In this task atomic is used because our application is related to Si.
+atom_style atomic
+
+#This is the default choice for boundary, meaning that particle can exist the box.
+boundary p p p
+
+#Define lattice parameter:  5.3 Å.
+lattice diamond 5.3
+
+#We want to simulate Si diamond and this reflect the symetry of diamond lattice
+region box block 0 6 0 6 0 6
+create_box 1 box
+create_atoms 1 box
+#The next two line define the potential used for this simulation.
+pair_style sw
+pair_coeff * * Si.sw Si
+# Silicon mass
+mass 1 28.085 
+
+# maintain isotropic pressure by relaxing the simulation box to
+fix 1 all box/relax iso 0.0 vmax 0.001
+
+#Next two lines help created data for visualization. In this case we output both the coordinate and velocity in 3D. The data then can be visualize by ovito
+dump 1 all custom 5 dump.xyz id element type x y z vx vy vz
+dump_modify 1 element Si
+
+#THis line format the printing process of simulation. The program will output a data point for each generated. 
+thermo 1
+#THis line format what information gonna be print out screen. For example, etotal give total potential energy, while ke give kinetic energy.
+thermo_style custom step vol press etotal pe
+
+# set algorithm to conjugate gradient 
+min_style cg
+# define the parameter of our algorithm :  convergence criterion for energy change, force magnitude and maximum number of iterations and search attempt for each. 
+minimize 1e-25 1e-25 5000 10000
+
+#Simply output data
+write_data Si_sw.dat

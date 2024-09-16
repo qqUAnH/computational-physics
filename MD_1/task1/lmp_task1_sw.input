@@ -1,0 +1,25 @@
+# Si with Stillinger-Weber potential
+units metal
+atom_style atomic
+boundary p p p
+lattice diamond 5.3
+region box block 0 6 0 6 0 6
+create_box 1 box
+create_atoms 1 box
+pair_style sw
+pair_coeff * * Si.sw Si
+mass 1 28.085 # Silicon mass
+fix 1 all box/relax iso 0.0 vmax 0.001
+dump 1 all custom 5 dump.xyz id element type x y z vx vy vz
+dump_modify 1 element Si
+
+#calculate potential energy per atom
+compute peratom all pe/atom
+compute eatom all reduce ave c_peratom
+thermo 1
+thermo_style custom time dt temp vol press etotal pe c_eatom
+
+
+min_style cg
+minimize 1e-25 1e-25 5000 10000
+write_data Si_sw.dat

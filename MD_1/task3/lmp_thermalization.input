@@ -1,0 +1,43 @@
+#This line set the style of unit for the simulation. This style will determine which units used in the data type. For example mass = gram/mole;energy= ev
+units metal
+
+# Define the atomic style out of a set of style supported by lammps. In this task atomic is used because our application is related to Si.
+atom_style atomic
+
+#This is the default choice for boundary, meaning that particle can exist the box.
+boundary p p p
+
+#read the parameter from separate data file
+read_data Si_sw.dat
+
+#The next two line define the potential used for this simulation.
+pair_style sw
+pair_coeff * * Si.sw Si
+
+#THis line format the printing process of simulation. The program will output a data point for each 1000 generated. 
+thermo 1000
+#THis line format what information gonna be print out screen. For example, etotal give total potential energy, while ke give kinetic energy.
+thermo_style custom time dt temp vol press etotal pe ke
+
+#This line help created an out put for the simulation. One can change  therm_sw_nvt.out to therm_sw_nvt.csv to have csv file
+fix output all print 100 "$(step) $(time) $(temp) $(press) &
+$(pe) $(ke) $(etotal)" file therm_sw_nvt.out screen no
+
+#Next two lines help created data for visualization. In this case we output both the coordinate and velocity in 3D. The data then can be visualize by ovito
+dump 1 all custom 100 dump.xyz id element type x y z vx vy vz
+dump_modify 1 element Si
+
+#Define time step for simulation. In this task it is set to 0.001, which is suitable according to formular given in lecture slide.
+timestep 0.001
+#Initialize velocity for all atom with initital temperature 300 + a random seed + allow random rotation + ensure that total momentum of system is zero- 
+#and finally assigns velocities based on Gaussian distribuition 
+velocity all create 300 4928459 rot yes mom yes dist gaussian
+
+# set thermostats of simulation to Nose-Hoover with T_damp = 0.1
+fix therm_nosehoover all nvt temp 300 300 0.1
+
+# Simulate with 50000 steps which means 50 second of the systems.
+run 50000
+
+# Output data
+write_data Si_sw_therm.dat

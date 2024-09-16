@@ -1,0 +1,36 @@
+units metal
+atom_style atomic
+boundary p p p
+read_data Si_sw.dat
+
+pair_style sw
+pair_coeff * * Si.sw Si
+
+
+thermo 1000
+thermo_style custom time dt temp vol press etotal pe ke
+fix output all print 100 "$(step) $(time) $(temp) $(press) &
+$(pe) $(ke) $(etotal)" file therm_sw_nve_berendsen.csv screen no
+
+dump 1 all custom 100 dump.xyz id element type x y z vx vy vz
+
+dump_modify 1 element Si
+
+timestep 0.001
+
+velocity all create 300 4928459 rot yes mom yes dist gaussian
+
+#uncomment to swap between small and big T_damp 
+#fix therm_nosehoover all nvt temp 300 300 0.1
+#fix therm_nosehoover all nvt temp 300 300 1
+
+#other thermostats:Berendsen, Langevin
+
+#fix therm_langevin all langevin 300 300 1 699483 zero yes
+fix therm_berendsen all temp/berendsen 300 300 1
+fix fix_nve all nve 
+
+
+
+run 50000
+write_data Si_sw_therm.dat
