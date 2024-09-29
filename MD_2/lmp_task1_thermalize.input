@@ -1,0 +1,35 @@
+units metal
+atom_style atomic
+boundary p p p
+read_data tungsten_relaxed.dat
+
+
+# Set up pair coeff
+
+pair_style eam/fs
+# Dudarev W potential, Caro's version
+pair_coeff * * eam.W.W.in_DD-BN_lammps.setfl W
+
+
+thermo 1000
+thermo_style custom time dt temp vol press etotal pe ke
+fix output all print 100 "$(step) $(time) $(temp) $(press) &
+$(pe) $(ke) $(etotal)" file therm_sw_nve_berendsen.dat screen no
+
+dump 1 all custom 100 dump.xyz id element type x y z vx vy vz
+dump_modify 1 element W
+
+timestep 0.001
+
+velocity all create 300 4928459 rot yes mom yes dist gaussian
+
+fix therm_nosehoover all nvt temp 30 30 1
+
+#other thermostats:Berendsen, Langevin
+
+fix therm_berendsen all temp/berendsen 300 300 1
+fix fix_nve all nve 
+
+
+run 50000
+write_data tungsten_therm_Duda_rev.dat

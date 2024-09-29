@@ -1,0 +1,159 @@
+LAMMPS (29 Aug 2024)
+OMP_NUM_THREADS environment is not set. Defaulting to 1 thread. (src/src/comm.cpp:98)
+  using 1 OpenMP thread(s) per MPI task
+units metal
+atom_style atomic
+boundary p p p
+read_data tungsten_relaxed.dat
+Reading data file ...
+  orthogonal box = (-0.12565666 -0.12565666 -0.12565666) to (31.525657 31.525657 31.525657)
+  1 by 1 by 1 MPI processor grid
+  reading atoms ...
+  2000 atoms
+  reading velocities ...
+  2000 velocities
+  read_data CPU = 0.010 seconds
+
+
+# Set up pair coeff
+
+pair_style eam/fs
+# Dudarev W potential, Caro's version
+pair_coeff * * eam.W.W.in_DD-BN_lammps.setfl W
+
+
+thermo 1000
+thermo_style custom time dt temp vol press etotal pe ke
+fix output all print 100 "$(step) $(time) $(temp) $(press) $(pe) $(ke) $(etotal)" file therm_sw_nve_berendsen.dat screen no
+
+dump 1 all custom 100 dump.xyz id element type x y z vx vy vz
+dump_modify 1 element W
+
+timestep 0.001
+
+velocity all create 300 4928459 rot yes mom yes dist gaussian
+
+fix therm_nosehoover all nvt temp 30 30 1
+
+#other thermostats:Berendsen, Langevin
+
+fix therm_berendsen all temp/berendsen 300 300 1
+fix fix_nve all nve
+
+
+run 50000
+
+CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE
+
+Your simulation uses code contributions which should be cited:
+
+- Type Label Framework: https://doi.org/10.1021/acs.jpcb.3c08419
+
+@Article{Gissinger24,
+ author = {Jacob R. Gissinger, Ilia Nikiforov, Yaser Afshar, Brendon Waters, Moon-ki Choi, Daniel S. Karls, Alexander Stukowski, Wonpil Im, Hendrik Heinz, Axel Kohlmeyer, and Ellad B. Tadmor},
+ title = {Type Label Framework for Bonded Force Fields in LAMMPS},
+ journal = {J. Phys. Chem. B},
+ year =    2024,
+ volume =  128,
+ number =  13,
+ pages =   {3282–-3297}
+}
+
+CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE-CITE
+
+WARNING: One or more atoms are time integrated more than once (src/src/modify.cpp:296)
+Neighbor list info ...
+  update: every = 1 steps, delay = 0 steps, check = yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 6.4
+  ghost atom cutoff = 6.4
+  binsize = 3.2, bins = 10 10 10
+  1 neighbor lists, perpetual/occasional/extra = 1 0 0
+  (1) pair eam/fs, perpetual
+      attributes: half, newton on
+      pair build: half/bin/atomonly/newton
+      stencil: half/bin/3d
+      bin: standard
+Per MPI rank memory allocation (min/avg/max) = 3.499 | 3.499 | 3.499 Mbytes
+     Time            Dt            Temp          Volume         Press          TotEng         PotEng         KinEng    
+ 0              0.001          300            31708.464      2611.3958     -17722.489     -17800.006      77.517309    
+ 1              0.001          276.86299      31708.464      2541.7215     -17666.894     -17738.433      71.538913    
+ 2              0.001          316.19576      31708.464      2233.0015     -17645.658     -17727.36       81.702147    
+ 3              0.001          318.96438      31708.464      1530.2015     -17643.248     -17725.666      82.417534    
+ 4              0.001          306.35146      31708.464      1832.1863     -17648.49      -17727.649      79.158469    
+ 5              0.001          282.59143      31708.464      2054.6937     -17654.458     -17727.477      73.01909     
+ 6              0.001          282.90746      31708.464      3107.2242     -17659.157     -17732.257      73.10075     
+ 7              0.001          273.55717      31708.464      3122.6595     -17661.975     -17732.659      70.68472     
+ 8              0.001          276.897        31708.464      3341.7161     -17664.204     -17735.752      71.547701    
+ 9              0.001          266.31767      31708.464      3026.476      -17665.936     -17734.751      68.814096    
+ 10             0.001          268.43992      31708.464      3551.1967     -17667.356     -17736.718      69.362468    
+ 11             0.001          271.38356      31708.464      3624.2213     -17667.838     -17737.961      70.123078    
+ 12             0.001          261.1843       31708.464      3356.7399     -17668.658     -17736.146      67.48768     
+ 13             0.001          252.09934      31708.464      3396.9074     -17669.186     -17734.326      65.140209    
+ 14             0.001          249.02356      31708.464      3230.3329     -17669.322     -17733.668      64.345455    
+ 15             0.001          256.85014      31708.464      3466.6419     -17670.218     -17736.586      66.367771    
+ 16             0.001          243.69157      31708.464      3320.2304     -17671.582     -17734.55       62.967717    
+ 17             0.001          266.01566      31708.464      3758.5318     -17672.678     -17741.414      68.736061    
+ 18             0.001          267.36365      31708.464      3975.5871     -17674.811     -17743.895      69.084369    
+ 19             0.001          249.19746      31708.464      3665.0512     -17676.75      -17741.14       64.390389    
+ 20             0.001          269.28622      31708.464      4428.5639     -17677.127     -17746.709      69.581144    
+ 21             0.001          252.32749      31708.464      3975.3683     -17676.757     -17741.956      65.199159    
+ 22             0.001          255.30437      31708.464      4092.8954     -17677.691     -17743.66       65.968358    
+ 23             0.001          239.84345      31708.464      3968.6637     -17679.169     -17741.143      61.973395    
+ 24             0.001          239.74925      31708.464      3784.8717     -17680.412     -17742.361      61.949055    
+ 25             0.001          235.2262       31708.464      3665.7978     -17681.139     -17741.919      60.780339    
+ 26             0.001          225.80967      31708.464      3673.5261     -17681.642     -17739.989      58.347193    
+ 27             0.001          235.98581      31708.464      3864.732      -17682.524     -17743.501      60.976617    
+ 28             0.001          237.85418      31708.464      4219.6226     -17683.248     -17744.708      61.459387    
+ 29             0.001          238.15173      31708.464      3946.2754     -17682.917     -17744.453      61.53627     
+ 30             0.001          232.23748      31708.464      4045.113      -17683.373     -17743.381      60.008083    
+ 31             0.001          218.97614      31708.464      3617.0178     -17684.111     -17740.693      56.581471    
+ 32             0.001          247.11175      31708.464      4658.2723     -17685.515     -17749.366      63.851461    
+ 33             0.001          224.44819      31708.464      4135.0321     -17686.455     -17744.451      57.995399    
+ 34             0.001          236.22792      31708.464      4305.2649     -17687.378     -17748.418      61.039175    
+ 35             0.001          224.26353      31708.464      3686.5774     -17687.522     -17745.47       57.947686    
+ 36             0.001          225.888        31708.464      4107.1807     -17687.819     -17746.186      58.367433    
+ 37             0.001          222.89222      31708.464      3955.8718     -17687.701     -17745.294      57.593351    
+ 38             0.001          206.39535      31708.464      3387.6818     -17686.981     -17740.312      53.330707    
+ 39             0.001          202.04384      31708.464      3363.5012     -17687.418     -17739.624      52.206316    
+ 40             0.001          218.07257      31708.464      4001.8111     -17688.43      -17744.778      56.347995    
+ 41             0.001          217.67318      31708.464      4110.6687     -17688.769     -17745.014      56.244797    
+ 42             0.001          233.85939      31708.464      4121.0203     -17689.592     -17750.019      60.427168    
+ 43             0.001          240.85832      31708.464      4829.0469     -17691.455     -17753.69       62.235629    
+ 44             0.001          229.34933      31708.464      4349.5883     -17692.076     -17751.338      59.261809    
+ 45             0.001          216.41879      31708.464      3917.9634     -17692.237     -17748.158      55.920673    
+ 46             0.001          209.04215      31708.464      4023.5429     -17691.9       -17745.915      54.014617    
+ 47             0.001          224.70146      31708.464      4205.906      -17691.471     -17749.532      58.060841    
+ 48             0.001          194.8252       31708.464      3390.6437     -17691.977     -17742.319      50.341084    
+ 49             0.001          210.74975      31708.464      3879.7166     -17693.084     -17747.54       54.455846    
+ 50             0.001          220.36552      31708.464      4270.4454     -17693.821     -17750.761      56.940473    
+Loop time of 46.5299 on 1 procs for 50000 steps with 2000 atoms
+
+Performance: 92.844 ns/day, 0.258 hours/ns, 1074.578 timesteps/s, 2.149 Matom-step/s
+99.7% CPU use with 1 MPI tasks x 1 OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 41.682     | 41.682     | 41.682     |   0.0 | 89.58
+Neigh   | 0          | 0          | 0          |   0.0 |  0.00
+Comm    | 0.71548    | 0.71548    | 0.71548    |   0.0 |  1.54
+Output  | 1.6056     | 1.6056     | 1.6056     |   0.0 |  3.45
+Modify  | 2.2558     | 2.2558     | 2.2558     |   0.0 |  4.85
+Other   |            | 0.2714     |            |       |  0.58
+
+Nlocal:           2000 ave        2000 max        2000 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:           4119 ave        4119 max        4119 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:          64000 ave       64000 max       64000 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 64000
+Ave neighs/atom = 32
+Neighbor list builds = 0
+Dangerous builds = 0
+write_data tungsten_therm_Duda_rev.dat
+System init for write_data ...
+WARNING: One or more atoms are time integrated more than once (src/src/modify.cpp:296)
+Total wall time: 0:00:46

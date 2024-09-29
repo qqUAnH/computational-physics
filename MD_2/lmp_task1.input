@@ -1,0 +1,34 @@
+# Input script for bcc Tungsten system
+
+units metal
+atom_style atomic
+boundary p p p
+
+# Create a bcc lattice
+lattice bcc 3.14
+region box block 0 10 0 10 0 10
+create_box 1 box
+create_atoms 1 box
+
+pair_style eam/fs
+# Dudarev W potential, Caro's version
+pair_coeff * * eam.W.W.in_DD-BN_lammps.setfl W
+
+# Dudarev W potential, Caro's version
+# pair_coeff * * eam.W.W.in_DD-BN_lammps W
+
+mass 1 183.84  # Tungsten mass
+
+fix 1 all box/relax iso 0.0 vmax 0.001
+dump 1 all custom 5 dump.xyz id element type x y z vx vy vz
+dump_modify 1 element W 
+
+# Calculate potential energy per atom
+compute peratom all pe/atom
+compute eatom all reduce ave c_peratom
+thermo 1
+thermo_style custom time dt temp vol press etotal pe c_eatom
+
+min_style cg
+minimize 1e-25 1e-25 5000 10000
+write_data tungsten_relaxed.dat
